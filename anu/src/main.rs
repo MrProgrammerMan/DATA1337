@@ -97,9 +97,13 @@ fn bound(err_message: &str, lower_bound: u8, upper_bound: u8) -> u8 {
 }
 
 fn present_menu(name: &str, choices: &[&str]) {
-    print!("\x1B[2J");
+    clear_screen();
     println!("{}", name);
     for (i, item) in choices.iter().enumerate() {
         println!("{}. {}", i, item);
     }
+}
+
+fn clear_screen() {
+    print!("\x1B[2J");
 }
