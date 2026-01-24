@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, io};
+use std::{cmp::Ordering, fmt::format, io};
 
 const INVALID_MENU_CHOICE_MESSAGE: &'static str = "You must enter a valid menu option";
 
@@ -59,12 +59,22 @@ fn run_shopping_list_menu(shopping_list: &mut Vec<(String, i32)>) {
         present_menu(&MENU_NAME, &CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
-            1 => println!("Not yet implemented"),
+            1 => display_shopping_list(shopping_list),
             2 => println!("Not yet implemented"),
             3 => println!("Not yet implemented"),
             _ => unreachable!()
         }
     }
+}
+
+fn display_shopping_list(shopping_list: &Vec<(String, i32)>) {
+    clear_screen();
+    println!("{}", shopping_list.iter()
+        .map(|(item, i)| format!("Item: {}\tamount: {}", item, i))
+        .collect::<Vec<String>>()
+        .join("\n"));
+    println!("Press ENTER to return");
+    wait_for_input();
 }
 
 fn run_guess_the_number() {
