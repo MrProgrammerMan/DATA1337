@@ -19,7 +19,7 @@ fn run_main_menu() {
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => run_games_menu(),
-            2 => println!("Option 2"),
+            2 => run_shopping_list_menu(),
             _ => unreachable!()
         }
     }
@@ -39,6 +39,27 @@ fn run_games_menu() {
             0 => return,
             1 => println!("Not yet implemented"),
             2 => println!("Not yet implemented"),
+            _ => unreachable!()
+        }
+    }
+}
+
+fn run_shopping_list_menu() {
+    const MENU_NAME: &'static str = "SHOPPING LIST";
+    const CHOICES: [&'static str; 4] = [
+        "Main menu",
+        "Show shopping list",
+        "Add to shopping list",
+        "Remove from shopping list(by name)"
+    ];
+
+    loop {
+        present_menu(&MENU_NAME, &CHOICES);
+        match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
+            0 => return,
+            1 => println!("Not yet implemented"),
+            2 => println!("Not yet implemented"),
+            3 => println!("Not yet implemented"),
             _ => unreachable!()
         }
     }
