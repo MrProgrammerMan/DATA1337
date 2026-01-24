@@ -65,6 +65,11 @@ fn run_shopping_list_menu() {
     }
 }
 
+fn run_guess_the_number() {
+    let secret_number = rand::random_range(0..=100) as u8;
+    println!("Welcome to Guess The Number!");
+}
+
 fn input_u8(err_message: &str) -> u8 {
     let mut input = String::new();
 
