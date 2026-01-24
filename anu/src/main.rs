@@ -13,11 +13,14 @@ fn run_main_menu() {
         "Shopping list"
     ];
 
-    match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
-        0 => println!("Option 0"),
-        1 => println!("Option 1"),
-        2 => println!("Option 2"),
-        _ => unreachable!()
+    loop {
+        present_menu(&CHOICES);
+        match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
+            0 => return,
+            1 => println!("Option 1"),
+            2 => println!("Option 2"),
+            _ => unreachable!()
+        }
     }
 }
 
@@ -45,5 +48,10 @@ fn bound(err_message: &str, lower_bound: u8, upper_bound: u8) -> u8 {
         println!("{}", err_message);
         bound(err_message, lower_bound, upper_bound)
     }
-    
+}
+
+fn present_menu(choices: &[&str]) {
+    for (i, item) in choices.iter().enumerate() {
+        println!("{}. {}", i, item);
+    }
 }
