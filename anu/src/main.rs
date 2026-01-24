@@ -17,8 +17,26 @@ fn run_main_menu() {
         present_menu(&CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
-            1 => println!("Option 1"),
+            1 => run_games_menu(),
             2 => println!("Option 2"),
+            _ => unreachable!()
+        }
+    }
+}
+
+fn run_games_menu() {
+    const CHOICES: [&'static str; 3] = [
+        "Main menu",
+        "Guess the number",
+        "Tic-Tac-Toe"
+    ];
+
+    loop {
+        present_menu(&CHOICES);
+        match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
+            0 => return,
+            1 => println!("Not yet implemented"),
+            2 => println!("Not yet implemented"),
             _ => unreachable!()
         }
     }
