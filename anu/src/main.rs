@@ -1,4 +1,4 @@
-use std::io;
+use std::{cmp::Ordering, io};
 
 const INVALID_MENU_CHOICE_MESSAGE: &'static str = "You must enter a valid menu option";
 
@@ -66,9 +66,40 @@ fn run_shopping_list_menu() {
 }
 
 fn run_guess_the_number() {
+    let secret_number = rand::random_range(1..=100) as u8;
+    let mut remaining_tries = 8u8;
+    const INVALID_GUESS_MESSAGE: &'static str = "You must input a valid guess between 1 and 100";
+
     clear_screen();
-    let secret_number = rand::random_range(0..=100) as u8;
     println!("Welcome to Guess The Number!");
+    println!("The number is between 1 and 100");
+    println!("You have {} tries to guess the number", remaining_tries);
+    remaining_tries -= 1;
+    print!("Have a guess: ");
+    let mut guess = bound(INVALID_GUESS_MESSAGE, 1, 101);
+
+    loop {
+        clear_screen();
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("{} is lower than the secret number.", guess),
+            Ordering::Greater => println!("{} is higher than the secret number.", guess),
+            Ordering::Equal => {
+                println!("{} is the correct number! You WIN!!!", guess);
+                println!("You guessed the number with {} tries left", remaining_tries);
+                break;
+            }
+        }
+        if remaining_tries <= 0 {
+            println!("Unfortunately you failed to guess the numbes");
+            println!("Better luck next time!");
+            break;
+        }
+        println!("You have {} tries left to guess the number", remaining_tries);
+        print!("Have another guess: ");
+        guess = bound(INVALID_GUESS_MESSAGE, 1, 101);
+        remaining_tries -= 1;
+    }
+    println!("Press ENTER to return");
     wait_for_input();
 }
 
@@ -107,7 +138,7 @@ fn present_menu(name: &str, choices: &[&str]) {
 }
 
 fn clear_screen() {
-    print!("\x1B[2J");
+    print!("\x1B[2J\x1B[H");
 }
 
 fn wait_for_input() {
