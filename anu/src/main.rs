@@ -40,7 +40,7 @@ fn run_games_menu() {
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => run_guess_the_number(),
-            2 => println!("Not yet implemented"),
+            2 => run_tic_tac_toe(),
             _ => unreachable!()
         }
     }
@@ -158,6 +158,13 @@ fn run_guess_the_number() {
         guess = bound(INVALID_GUESS_MESSAGE, 1, 101);
         remaining_tries -= 1;
     }
+    println!("Press ENTER to return");
+    wait_for_input();
+}
+
+fn run_tic_tac_toe() {
+    clear_screen();
+    println!("Tic tac toe is not yet implemented");
     println!("Press ENTER to return");
     wait_for_input();
 }
