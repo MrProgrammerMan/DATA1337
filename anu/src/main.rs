@@ -37,7 +37,7 @@ fn run_games_menu() {
         present_menu(&MENU_NAME, &CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
-            1 => println!("Not yet implemented"),
+            1 => run_guess_the_number(),
             2 => println!("Not yet implemented"),
             _ => unreachable!()
         }
@@ -66,8 +66,10 @@ fn run_shopping_list_menu() {
 }
 
 fn run_guess_the_number() {
+    clear_screen();
     let secret_number = rand::random_range(0..=100) as u8;
     println!("Welcome to Guess The Number!");
+    wait_for_input();
 }
 
 fn input_u8(err_message: &str) -> u8 {
@@ -106,4 +108,11 @@ fn present_menu(name: &str, choices: &[&str]) {
 
 fn clear_screen() {
     print!("\x1B[2J");
+}
+
+fn wait_for_input() {
+    let mut _s = String::new();
+    io::stdin()
+        .read_line(&mut _s)
+        .expect("Failed to read input");
 }
