@@ -61,7 +61,7 @@ fn run_shopping_list_menu(shopping_list: &mut Vec<(String, i32)>) {
             0 => return,
             1 => display_shopping_list(shopping_list),
             2 => add_to_shopping_list(shopping_list),
-            3 => println!("Not yet implemented"),
+            3 => remove_from_shopping_list(shopping_list),
             _ => unreachable!()
         }
     }
@@ -101,6 +101,27 @@ fn add_to_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
         let amount = bound(SHOPPING_LIST_AMOUNT_ERROR_MESSAGE, 1, 101);
         shopping_list.push((input, amount.into()));
     }
+}
+
+fn remove_from_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
+    clear_screen();
+    println!("Enter the name of the item to remove:");
+    let mut input = String::new();
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read input");
+
+    input = String::from(input.trim());
+
+    if let Some((i, _)) = shopping_list.iter_mut().enumerate().find(|(_, (item, _))| *item == input) {
+        shopping_list.remove(i);
+        println!("Item removed");
+    } else {
+        println!("No such item on the list");
+    }
+    println!("Press ENTER to return");
+    wait_for_input();
 }
 
 fn run_guess_the_number() {
