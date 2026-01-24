@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, fmt::format, io};
+use std::{cmp::Ordering, io};
 
 const INVALID_MENU_CHOICE_MESSAGE: &'static str = "You must enter a valid menu option";
 
@@ -60,7 +60,7 @@ fn run_shopping_list_menu(shopping_list: &mut Vec<(String, i32)>) {
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => display_shopping_list(shopping_list),
-            2 => println!("Not yet implemented"),
+            2 => add_to_shopping_list(shopping_list),
             3 => println!("Not yet implemented"),
             _ => unreachable!()
         }
@@ -75,6 +75,32 @@ fn display_shopping_list(shopping_list: &Vec<(String, i32)>) {
         .join("\n"));
     println!("Press ENTER to return");
     wait_for_input();
+}
+
+fn add_to_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
+    clear_screen();
+    println!("Enter the name of the item to add:");
+    let mut input = String::new();
+    const SHOPPING_LIST_AMOUNT_ERROR_MESSAGE: &'static str = "Enter a valid amount between 1 and 100";
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read input");
+
+    input = String::from(input.trim());
+
+    let existing = shopping_list.iter_mut().find(|(item, _)| *item == input);
+
+    if let Some(item) = existing {
+        println!("Item is already in the shopping list.");
+        println!("Please enter the new amount: ");
+        let amount = bound(SHOPPING_LIST_AMOUNT_ERROR_MESSAGE, 1, 101);
+        item.1 = amount.into();
+    } else {
+        println!("Please enter the amount: ");
+        let amount = bound(SHOPPING_LIST_AMOUNT_ERROR_MESSAGE, 1, 101);
+        shopping_list.push((input, amount.into()));
+    }
 }
 
 fn run_guess_the_number() {
