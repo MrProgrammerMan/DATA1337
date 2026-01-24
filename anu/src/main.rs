@@ -14,12 +14,14 @@ fn run_main_menu() {
         "Shopping list"
     ];
 
+    let mut shopping_list: Vec<(String, i32)> = Vec::new();
+
     loop {
         present_menu(&MENU_NAME, &CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => run_games_menu(),
-            2 => run_shopping_list_menu(),
+            2 => run_shopping_list_menu(&mut shopping_list),
             _ => unreachable!()
         }
     }
@@ -44,7 +46,7 @@ fn run_games_menu() {
     }
 }
 
-fn run_shopping_list_menu() {
+fn run_shopping_list_menu(shopping_list: &mut Vec<(String, i32)>) {
     const MENU_NAME: &'static str = "SHOPPING LIST";
     const CHOICES: [&'static str; 4] = [
         "Main menu",
