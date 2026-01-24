@@ -7,6 +7,7 @@ fn main() {
 }
 
 fn run_main_menu() {
+    const MENU_NAME: &'static str = "MAIN MENU";
     const CHOICES: [&'static str; 3] = [
         "Quit",
         "Games",
@@ -14,7 +15,7 @@ fn run_main_menu() {
     ];
 
     loop {
-        present_menu(&CHOICES);
+        present_menu(&MENU_NAME, &CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => run_games_menu(),
@@ -25,6 +26,7 @@ fn run_main_menu() {
 }
 
 fn run_games_menu() {
+    const MENU_NAME: &'static str = "GAMES MENU";
     const CHOICES: [&'static str; 3] = [
         "Main menu",
         "Guess the number",
@@ -32,7 +34,7 @@ fn run_games_menu() {
     ];
 
     loop {
-        present_menu(&CHOICES);
+        present_menu(&MENU_NAME, &CHOICES);
         match bound(INVALID_MENU_CHOICE_MESSAGE, 0, CHOICES.len() as u8) {
             0 => return,
             1 => println!("Not yet implemented"),
@@ -68,7 +70,9 @@ fn bound(err_message: &str, lower_bound: u8, upper_bound: u8) -> u8 {
     }
 }
 
-fn present_menu(choices: &[&str]) {
+fn present_menu(name: &str, choices: &[&str]) {
+    print!("\x1B[2J");
+    println!("{}", name);
     for (i, item) in choices.iter().enumerate() {
         println!("{}. {}", i, item);
     }
