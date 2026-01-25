@@ -176,9 +176,19 @@ fn run_tic_tac_toe() {
             if let Some((free_space_index, _)) = free_space {
                 blank_spaces.remove(free_space_index);
                 board.set_field(input, Field::X);
+                if let Some(winner) = board.won() {
+                    println!("The winner is {}!!!", winner);
+                    wait_for_input();
+                    return;
+                }
                 let ai_choice = rand::random_range(0..blank_spaces.len());
                 board.set_field(blank_spaces[ai_choice], Field::O);
                 blank_spaces.remove(ai_choice);
+                if let Some(winner) = board.won() {
+                    println!("The winner is {}!!!", winner);
+                    wait_for_input();
+                    return;
+                }
                 break;
             } else {
                 println!("That space is not free. Choose another")
@@ -255,6 +265,16 @@ impl TicTacToe {
             .filter(|(_, f)| **f == Field::Blank)
             .map(|(i, _)| i)
             .collect::<Vec<usize>>()
+    }
+    fn won(&self) -> Option<Field> {
+        self.fields.iter().find(|row| {
+            let fieldRef = row[0];
+            if fieldRef == Field::Blank {
+                false
+            } else {
+                row.iter().all(|f| *f == fieldRef)
+            }
+        }).and_then(|row| Some(row[0]))
     }
 }
 
