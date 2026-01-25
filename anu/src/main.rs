@@ -229,18 +229,21 @@ impl TicTacToe {
 
 impl Display for TicTacToe {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let sep = "+---+---+---+\n";
+        writeln!(f, "┌───┬───┬───┐")?;
 
-        write!(
-            f,
-            "{sep}| {} | {} | {} |\n\
-             {sep}| {} | {} | {} |\n\
-             {sep}| {} | {} | {} |\n\
-             {sep}",
-            Field::X, Field::Blank, Field::Blank,
-            Field::O, Field::Blank, Field::Blank,
-            Field::Blank, Field::Blank, Field::Blank,
-        )
+        for (i, row) in self.fields.iter().enumerate() {
+            write!(f, "│")?;
+            for cell in row {
+                write!(f, " {} │", cell)?;
+            }
+            writeln!(f)?;
+
+            if i < self.fields.len() - 1 {
+                writeln!(f, "├───┼───┼───┤")?;
+            }
+        }
+
+        writeln!(f, "└───┴───┴───┘")
     }
 }
 
