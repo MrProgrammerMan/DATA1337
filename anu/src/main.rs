@@ -165,13 +165,22 @@ fn run_guess_the_number() {
 
 fn run_tic_tac_toe() {
     let mut board = TicTacToe::new();
+    let mut blank_spaces = board.get_blank_spaces();
     loop {
         clear_screen();
         println!("{}", board);
         const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
-        board.set_field((bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize, Field::X);
-        println!("{:?}", board.get_blank_spaces());
-        wait_for_input();
+        loop {
+            let input = (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize;
+            let free_space = blank_spaces.iter_mut().enumerate().find(|(_, s)| **s == input);
+            if let Some((free_space_index, _)) = free_space {
+                blank_spaces.remove(free_space_index);
+                board.set_field(input, Field::X);
+                break;
+            } else {
+                println!("That space is not free. Choose another")
+            }
+        }
     }
 }
 
