@@ -156,46 +156,59 @@ fn run_guess_the_number() {
 fn run_tic_tac_toe() {
     let mut board = TicTacToe::new();
     let mut blank_spaces = board.get_blank_spaces();
-    const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
+    let mut turn = true;
+    
     loop {
         clear_screen();
         println!("TIC-TAC-TOE");
         println!("{}", board);
-        loop {
-            let input = (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize;
-            let free_space = blank_spaces.iter_mut().enumerate().find(|(_, s)| **s == input);
-            if let Some((free_space_index, _)) = free_space {
-                blank_spaces.remove(free_space_index);
-                board.set_field(input, Field::X);
-                if let Some(winner) = board.won() {
-                    clear_screen();
-                    println!("{}", board);
-                    println!("The winner is {}!!!", winner);
-                    wait_for_input();
-                    return;
-                }
-                if blank_spaces.is_empty() {
-                    clear_screen();
-                    println!("{}", board);
-                    println!("The round ends in a draw...");
-                    wait_for_input();
-                    return;
-                }
-                let ai_choice = rand::random_range(0..blank_spaces.len());
-                board.set_field(blank_spaces[ai_choice], Field::O);
-                blank_spaces.remove(ai_choice);
-                if let Some(winner) = board.won() {
-                    clear_screen();
-                    println!("{}", board);
-                    println!("The winner is {}!!!", winner);
-                    wait_for_input();
-                    return;
-                }
-                break;
-            } else {
-                println!("That space is not free. Choose another")
-            }
+
+        if let Some(winner) = board.won() {
+            println!("The winner is {}!!!", winner);
+            println!("Press ENTER to return");
+            wait_for_input();
+            return;
         }
+        if blank_spaces.is_empty() {
+            println!("The round ends in a draw...");
+            println!("Press ENTER to return");
+            wait_for_input();
+            return;
+        }
+
+        let player = match turn {
+            true => Field::X,
+            false => Field::O
+        };
+
+        let move_to_make = match turn {
+            true => get_tic_tac_toe_choice(&blank_spaces),
+            false => rand::random_range(0..blank_spaces.len())
+        };
+
+        make_tic_tac_toe_move(&mut board, &mut blank_spaces, move_to_make, player);
+
+        turn = !turn;
+    }
+}
+
+fn make_tic_tac_toe_move(board: &mut TicTacToe, free_spaces: &mut Vec<usize>, move_to_make: usize, player: Field) {
+    board.set_field(free_spaces[move_to_make], player);
+    free_spaces.remove(move_to_make);
+}
+
+fn get_tic_tac_toe_choice(blank_spaces: &Vec<usize>) -> usize {
+    const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
+    let input = (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize;
+    let free_space = blank_spaces
+        .iter()
+        .enumerate()
+        .find(|(_, s)| **s == input);
+    if let Some((free_space_index, _)) = free_space {
+        free_space_index
+    } else {
+        println!("That space is not free. Choose another");
+        get_tic_tac_toe_choice(blank_spaces)
     }
 }
 
