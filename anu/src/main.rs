@@ -177,7 +177,16 @@ fn run_tic_tac_toe() {
                 blank_spaces.remove(free_space_index);
                 board.set_field(input, Field::X);
                 if let Some(winner) = board.won() {
+                    clear_screen();
+                    println!("{}", board);
                     println!("The winner is {}!!!", winner);
+                    wait_for_input();
+                    return;
+                }
+                if blank_spaces.is_empty() {
+                    clear_screen();
+                    println!("{}", board);
+                    println!("The round ends in a draw...");
                     wait_for_input();
                     return;
                 }
@@ -185,6 +194,8 @@ fn run_tic_tac_toe() {
                 board.set_field(blank_spaces[ai_choice], Field::O);
                 blank_spaces.remove(ai_choice);
                 if let Some(winner) = board.won() {
+                    clear_screen();
+                    println!("{}", board);
                     println!("The winner is {}!!!", winner);
                     wait_for_input();
                     return;
