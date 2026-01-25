@@ -1,6 +1,8 @@
 use std::{cmp::Ordering, io};
 use std::fmt::Display;
 
+use rand::seq::IndexedRandom;
+
 const INVALID_MENU_CHOICE_MESSAGE: &'static str = "You must enter a valid menu option";
 
 fn main() {
@@ -155,60 +157,50 @@ fn run_guess_the_number() {
 
 fn run_tic_tac_toe() {
     let mut board = TicTacToe::new();
-    let mut blank_spaces = board.get_blank_spaces();
     let mut turn = true;
+    const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
+    let mut rng = rand::rng();
     
     loop {
         clear_screen();
         println!("TIC-TAC-TOE");
         println!("{}", board);
 
-        if let Some(winner) = board.won() {
-            println!("The winner is {}!!!", winner);
-            println!("Press ENTER to return");
-            wait_for_input();
-            return;
+        board.update_game_state();
+        match board.get_game_state() {
+            GameState::Won(winner) => {
+                println!("The winner is {}!!!", winner);
+                println!("Press ENTER to return");
+                wait_for_input();
+                return;
+            },
+            GameState::Draw => {
+                println!("The round ends in a draw...");
+                println!("Press ENTER to return");
+                wait_for_input();
+                return;
+            },
+            GameState::Unfinished => {
+                let player = match turn {
+                    true => Field::X,
+                    false => Field::O
+                };
+
+                let move_to_make = match turn {
+                    true => (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize,
+                    false => *board.get_blank_fields().choose(&mut rng).unwrap()
+                };
+
+                match board.set_field(move_to_make, player) {
+                    Ok(_) => turn = !turn,
+                    Err(m) => {
+                        println!("{}", m);
+                        println!("Press ENTER to continue");
+                        wait_for_input();
+                    }
+                }
+            }
         }
-        if blank_spaces.is_empty() {
-            println!("The round ends in a draw...");
-            println!("Press ENTER to return");
-            wait_for_input();
-            return;
-        }
-
-        let player = match turn {
-            true => Field::X,
-            false => Field::O
-        };
-
-        let move_to_make = match turn {
-            true => get_tic_tac_toe_choice(&blank_spaces),
-            false => rand::random_range(0..blank_spaces.len())
-        };
-
-        make_tic_tac_toe_move(&mut board, &mut blank_spaces, move_to_make, player);
-
-        turn = !turn;
-    }
-}
-
-fn make_tic_tac_toe_move(board: &mut TicTacToe, free_spaces: &mut Vec<usize>, move_to_make: usize, player: Field) {
-    board.set_field(free_spaces[move_to_make], player);
-    free_spaces.remove(move_to_make);
-}
-
-fn get_tic_tac_toe_choice(blank_spaces: &Vec<usize>) -> usize {
-    const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
-    let input = (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize;
-    let free_space = blank_spaces
-        .iter()
-        .enumerate()
-        .find(|(_, s)| **s == input);
-    if let Some((free_space_index, _)) = free_space {
-        free_space_index
-    } else {
-        println!("That space is not free. Choose another");
-        get_tic_tac_toe_choice(blank_spaces)
     }
 }
 
@@ -261,27 +253,52 @@ fn wait_for_input() {
 
 struct TicTacToe {
     fields: [[Field; 3]; 3],
+    blank_fields: Vec<usize>,
+    state: GameState
 }
 
 impl TicTacToe {
     fn new() -> Self {
         Self {
-            fields: [[Field::Blank; 3]; 3]
+            fields: [[Field::Blank; 3]; 3],
+            blank_fields: (0..9).collect::<Vec<usize>>(),
+            state: GameState::Unfinished
         }
     }
-    fn set_field(&mut self, i: usize, f: Field) {
-        let row = i / 3;
-        let col = i % 3;
-        self.fields[row][col] = f;
+    fn set_field(&mut self, n: usize, f: Field) -> Result<(), &'static str> {
+        match self.get_blank_field_index(n) {
+            Some(i) => {
+                self.blank_fields.remove(i);
+                let row = n / 3;
+                let col = n % 3;
+                self.fields[row][col] = f;
+                Ok(())
+            },
+            None => Err("Space is not empty")
+        }
     }
-    fn get_blank_spaces(&self) -> Vec<usize> {
-        self.fields
+    fn get_game_state(&self) -> &GameState {
+        &self.state
+    }
+    fn get_blank_field_index(&self, n: usize) -> Option<usize> {
+        Some(self.blank_fields
             .iter()
-            .flatten()
             .enumerate()
-            .filter(|(_, f)| **f == Field::Blank)
-            .map(|(i, _)| i)
-            .collect::<Vec<usize>>()
+            .find(|(_, i)| **i == n)?
+            .0)
+    }
+    fn get_blank_fields(&self) -> &Vec<usize> {
+        &self.blank_fields
+    }
+    fn update_game_state(&mut self) {
+        if let Some(winner) = self.won() {
+            self.state = GameState::Won(winner);
+        } else if self.draw() {
+            self.state = GameState::Draw;
+        }
+    }
+    fn draw(&self) -> bool {
+        self.blank_fields.is_empty()
     }
     fn won(&self) -> Option<Field> {
         self.get_valid_lines().iter().find(|line| {
@@ -363,4 +380,10 @@ enum Field {
     X,
     O,
     Blank
+}
+
+enum GameState {
+    Unfinished,
+    Won(Field),
+    Draw
 }
