@@ -81,14 +81,8 @@ fn display_shopping_list(shopping_list: &Vec<(String, i32)>) {
 fn add_to_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
     clear_screen();
     println!("Enter the name of the item to add:");
-    let mut input = String::new();
+    let input = String::from(input_string().trim());
     const SHOPPING_LIST_AMOUNT_ERROR_MESSAGE: &'static str = "Enter a valid amount between 1 and 100";
-
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
-
-    input = String::from(input.trim());
 
     let existing = shopping_list.iter_mut().find(|(item, _)| *item == input);
 
@@ -107,11 +101,7 @@ fn add_to_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
 fn remove_from_shopping_list(shopping_list: &mut Vec<(String, i32)>) {
     clear_screen();
     println!("Enter the name of the item to remove:");
-    let mut input = String::new();
-
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
+    let mut input = String::from(input_string().trim());
 
     input = String::from(input.trim());
 
@@ -209,19 +199,21 @@ fn run_tic_tac_toe() {
 }
 
 fn input_u8(err_message: &str) -> u8 {
-    let mut input = String::new();
-
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
-
-    match input.trim().parse::<u8>() {
+    match input_string().trim().parse::<u8>() {
         Ok(n) => n,
         Err(_) => {
             println!("{}", err_message);
             input_u8(err_message)
         }
     }
+}
+
+fn input_string() -> String {
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read input");
+    input
 }
 
 fn bound(err_message: &str, lower_bound: u8, upper_bound: u8) -> u8 {
