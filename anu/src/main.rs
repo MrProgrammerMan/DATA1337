@@ -267,14 +267,47 @@ impl TicTacToe {
             .collect::<Vec<usize>>()
     }
     fn won(&self) -> Option<Field> {
-        self.fields.iter().find(|row| {
-            let fieldRef = row[0];
-            if fieldRef == Field::Blank {
+        self.get_valid_lines().iter().find(|line| {
+            let line_ref = line[0];
+            if line_ref == &Field::Blank {
                 false
             } else {
-                row.iter().all(|f| *f == fieldRef)
+                line.iter().all(|f| *f == line_ref)
             }
-        }).and_then(|row| Some(row[0]))
+        }).and_then(|row| Some(*row[0]))
+    }
+    fn get_valid_lines(&self) -> Vec<[&Field; 3]> {
+        let mut lines = Vec::with_capacity(8);
+
+        // rows
+        for row in &self.fields {
+            let [a, b, c] = row;
+            lines.push([a, b, c]);
+        }
+
+        // columns
+        for col in 0..3 {
+            lines.push([
+                &self.fields[0][col],
+                &self.fields[1][col],
+                &self.fields[2][col],
+            ]);
+        }
+
+        // diagonals
+        lines.push([
+            &self.fields[0][0],
+            &self.fields[1][1],
+            &self.fields[2][2],
+        ]);
+
+        lines.push([
+            &self.fields[0][2],
+            &self.fields[1][1],
+            &self.fields[2][0],
+        ]);
+
+        lines
     }
 }
 
@@ -308,7 +341,7 @@ impl Display for Field {
     }
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 enum Field {
     X,
     O,
