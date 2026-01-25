@@ -170,6 +170,8 @@ fn run_tic_tac_toe() {
         println!("{}", board);
         const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
         board.set_field((bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize, Field::X);
+        println!("{:?}", board.get_blank_spaces());
+        wait_for_input();
     }
 }
 
@@ -233,6 +235,9 @@ impl TicTacToe {
         let col = i % 3;
         self.fields[row][col] = f;
     }
+    fn get_blank_spaces(&self) -> Vec<usize> {
+        self.fields.iter().flatten().enumerate().filter(|(_, f)| **f == Field::Blank).map(|(i, _)| i).collect::<Vec<usize>>()
+    }
 }
 
 impl Display for TicTacToe {
@@ -265,7 +270,7 @@ impl Display for Field {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 enum Field {
     X,
     O,
