@@ -135,7 +135,7 @@ fn run_guess_the_number() {
     println!("The number is between 1 and 100");
     println!("You have {} tries to guess the number", remaining_tries);
     remaining_tries -= 1;
-    print!("Have a guess: ");
+    println!("Have a guess: ");
     let mut guess = bound(INVALID_GUESS_MESSAGE, 1, 101);
 
     loop {
@@ -155,7 +155,7 @@ fn run_guess_the_number() {
             break;
         }
         println!("You have {} tries left to guess the number", remaining_tries);
-        print!("Have another guess: ");
+        println!("Have another guess: ");
         guess = bound(INVALID_GUESS_MESSAGE, 1, 101);
         remaining_tries -= 1;
     }
