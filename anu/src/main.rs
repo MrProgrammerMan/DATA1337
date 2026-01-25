@@ -156,10 +156,11 @@ fn run_guess_the_number() {
 fn run_tic_tac_toe() {
     let mut board = TicTacToe::new();
     let mut blank_spaces = board.get_blank_spaces();
+    const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
     loop {
         clear_screen();
+        println!("TIC-TAC-TOE");
         println!("{}", board);
-        const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
         loop {
             let input = (bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize;
             let free_space = blank_spaces.iter_mut().enumerate().find(|(_, s)| **s == input);
