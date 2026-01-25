@@ -236,7 +236,13 @@ impl TicTacToe {
         self.fields[row][col] = f;
     }
     fn get_blank_spaces(&self) -> Vec<usize> {
-        self.fields.iter().flatten().enumerate().filter(|(_, f)| **f == Field::Blank).map(|(i, _)| i).collect::<Vec<usize>>()
+        self.fields
+            .iter()
+            .flatten()
+            .enumerate()
+            .filter(|(_, f)| **f == Field::Blank)
+            .map(|(i, _)| i)
+            .collect::<Vec<usize>>()
     }
 }
 
@@ -264,8 +270,8 @@ impl Display for Field {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
             Field::Blank => " ",
-            Field::O => "O",
-            Field::X => "X"
+            Field::O => "○",
+            Field::X => "✕"
         })
     }
 }
