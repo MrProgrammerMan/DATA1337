@@ -1,4 +1,5 @@
 use std::{cmp::Ordering, io};
+use std::fmt::Display;
 
 const INVALID_MENU_CHOICE_MESSAGE: &'static str = "You must enter a valid menu option";
 
@@ -164,8 +165,8 @@ fn run_guess_the_number() {
 
 fn run_tic_tac_toe() {
     clear_screen();
-    println!("Tic tac toe is not yet implemented");
-    println!("Press ENTER to return");
+    let board = TicTacToe::new();
+    println!("{}", board);
     wait_for_input();
 }
 
@@ -212,4 +213,50 @@ fn wait_for_input() {
     io::stdin()
         .read_line(&mut _s)
         .expect("Failed to read input");
+}
+
+struct TicTacToe {
+    fields: [[Field; 3]; 3],
+}
+
+impl TicTacToe {
+    fn new() -> Self {
+        Self {
+            fields: [[Field::Blank; 3]; 3]
+        }
+    }
+}
+
+impl Display for TicTacToe {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let sep = "+---+---+---+\n";
+
+        write!(
+            f,
+            "{sep}| {} | {} | {} |\n\
+             {sep}| {} | {} | {} |\n\
+             {sep}| {} | {} | {} |\n\
+             {sep}",
+            Field::X, Field::Blank, Field::Blank,
+            Field::O, Field::Blank, Field::Blank,
+            Field::Blank, Field::Blank, Field::Blank,
+        )
+    }
+}
+
+impl Display for Field {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Field::Blank => " ",
+            Field::O => "O",
+            Field::X => "X"
+        })
+    }
+}
+
+#[derive(Copy, Clone)]
+enum Field {
+    X,
+    O,
+    Blank
 }
