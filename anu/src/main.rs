@@ -164,10 +164,13 @@ fn run_guess_the_number() {
 }
 
 fn run_tic_tac_toe() {
-    clear_screen();
-    let board = TicTacToe::new();
-    println!("{}", board);
-    wait_for_input();
+    let mut board = TicTacToe::new();
+    loop {
+        clear_screen();
+        println!("{}", board);
+        const INVALID_CELL_MESSAGE: &'static str = "You must input a valid cell between 1 and 9";
+        board.set_field((bound(INVALID_CELL_MESSAGE, 1, 10)-1) as usize, Field::X);
+    }
 }
 
 fn input_u8(err_message: &str) -> u8 {
@@ -224,6 +227,11 @@ impl TicTacToe {
         Self {
             fields: [[Field::Blank; 3]; 3]
         }
+    }
+    fn set_field(&mut self, i: usize, f: Field) {
+        let row = i / 3;
+        let col = i % 3;
+        self.fields[row][col] = f;
     }
 }
 
